@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Little Story ❤️</title>
+
+<script>
+var cur = 0;
+
+function startScrapbook() {
+    var introEl = document.getElementById("intro");
+    if (introEl) introEl.style.display = "none";
+    showPage(0);
+    playSong();
+    startHearts();
+    addSparkles();
+}
+
+function showPage(n) {
+    var p = document.querySelectorAll(".page");
+    var c = document.getElementById("counter");
+    if (!p || p.length === 0) return;
+    for (var i = 0; i < p.length; i++) {
+        p[i].classList.remove("active");
+    }
+    if (p[n]) p[n].classList.add("active");
+    if (c) c.innerText = (n + 1) + " / " + p.length;
+}
+
+function nextPage() {
+    var p = document.querySelectorAll(".page");
+    if (cur < p.length - 1) {
+        cur++;
+        showPage(cur);
+        addSparkles();
+    }
+}
+
+function previousPage() {
+    if (cur > 0) {
+        cur--;
+        showPage(cur);
+    }
+}
+
+function restart() {
+    cur = 0;
+    showPage(0);
+    addSparkles();
+}
+
+function playSong() {
+    var m = document.getElementById("music");
+    var btn = document.getElementById("musicButton");
+    if (m) {
+        m.play().then(function() {
+            if (btn) {
+                btn.innerText = "🎵";
+                btn.classList.add("playing");
+            }
+        }).catch(function() {
+            if (btn) btn.innerText = "🔇";
+        });
+    }
+}
+
+function toggleMusic() {
+    var m = document.getElementById("music");
+    var btn = document.getElementById("musicButton");
+    if (!m) return;
+    if (m.paused) {
+        m.play();
+        if (btn) {
+            btn.innerText = "🎵";
+            btn.classList.add("playing");
+        }
+    } else {
+        m.pause();
+        if (btn) {
+            btn.innerText = "🔇";
+            btn.classList.remove("playing");
+        }
+    }
+}
+
+function addSparkles() {
+    for (var i = 0; i < 6; i++) {
+        var s = document.createElement("div");
+        s.className = "sparkle";
+        s.innerText = "✨";
+        s.style.left = Math.random() * window.innerWidth + "px";
+        s.style.top = Math.random() * window.innerHeight + "px";
+        document.body.appendChild(s);
+        setTimeout(function(elem) {
+            if (elem) elem.remove();
+        }, 2000, s);
+    }
+}
+
+function startHearts() {
+    setInterval(function() {
+        var h = document.createElement("div");
+        h.className = "floating-heart";
+        var icons = ["❤️", "💖", "🤍", "✨"];
+        h.innerText = icons[Math.floor(Math.random() * icons.length)];
+        h.style.left = Math.random() * 100 + "vw";
+        h.style.setProperty("--size", Math.random());
+        h.style.setProperty("--duration", (Math.random() * 3 + 4) + "s");
+        document.body.appendChild(h);
+        setTimeout(function(elem) {
+            if (elem) elem.remove();
+        }, 7000, h);
+    }, 600);
+}
+</script>
+
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{ background: linear-gradient(135deg,#d8c4b8,#f5e9df); font-family: Georgia, serif; color: #493b36; overflow: hidden; height: 100vh; }
+#intro{ position: fixed; inset: 0; z-index: 999; display: flex; align-items: center; justify-content: center; text-align: center; background: radial-gradient(circle at center, #fff8f0, #dfcabe); }
+.intro-content{ animation: introFloat 3s ease-in-out infinite; }
+.intro-small{ font-size: 18px; letter-spacing: 3px; margin-bottom: 15px; }
+.intro-title{ font-family: cursive; font-size: 60px; line-height: .95; margin-bottom: 20px; }
+.open-button{ border: 0; background: #705148; color: white; padding: 14px 30px; border-radius: 40px; font-size: 16px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,.2); transition: .3s; }
+.open-button:hover{ transform: scale(1.08); }
+@keyframes introFloat{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-10px); } }
+#musicButton{ position: fixed; top: 15px; right: 15px; z-index: 500; width: 45px; height: 45px; border: 0; border-radius: 50%; background: #76564b; color: white; font-size: 20px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,.2); transition: .3s; }
+#musicButton.playing{ animation: musicPulse 1.2s infinite; }
+@keyframes musicPulse{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.15); } }
+.book{ width: 100vw; height: 100vh; position: relative; }
+.page{ position: absolute; width: min(92vw,520px); height: min(90vh,760px); left: 50%; top: 50%; transform: translate(-50%,-50%); background: #fffaf2; border-radius: 12px; padding: 35px 25px; display: none !important; overflow-y: auto; box-shadow: 0 25px 70px rgba(0,0,0,.25); }
+.page.active{ display: flex !important; justify-content: center; align-items: center; animation: pageOpen .8s ease; }
+@keyframes pageOpen{ 0%{ opacity: 0; transform: translate(-50%,-50%) rotateY(-25deg) scale(.85); } 60%{ opacity: 1; transform: translate(-50%,-50%) rotateY(5deg) scale(1.02); } 100%{ opacity: 1; transform: translate(-50%,-50%) rotateY(0) scale(1); } }
+.page::before{ content: ""; position: absolute; inset: 0; background-image: radial-gradient(#b9a89c .7px, transparent .7px); background-size: 12px 12px; opacity: .15; pointer-events: none; }
+.content{ width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; z-index: 2; }
+.small{ font-family: cursive; font-size: 23px; letter-spacing: 2px; }
+h1{ font-family: cursive; font-size: 60px; line-height: .95; margin: 20px 0; }
+h2{ font-family: cursive; font-size: 43px; margin-bottom: 15px; }
+p{ font-size: 16px; line-height: 1.7; max-width: 420px; }
+.single-photo{ width: 80%; max-height: 420px; object-fit: cover; padding: 9px; background: white; box-shadow: 0 10px 25px rgba(0,0,0,.2); transform: rotate(-2deg); transition: .5s; border-radius: 4px; }
+.single-photo:hover{ transform: rotate(0) scale(1.04); }
+.photo-grid{ width: 100%; display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; padding: 10px; }
+.photo-grid img{ width: 100%; height: 135px; object-fit: cover; padding: 6px; background: white; box-shadow: 0 6px 15px rgba(0,0,0,.15); transition: .5s; border-radius: 4px; }
+.photo-grid img:nth-child(odd){ transform: rotate(-3deg); }
+.photo-grid img:nth-child(even){ transform: rotate(3deg); }
+.photo-grid img:hover{ transform: rotate(0) scale(1.06); z-index: 5; }
+.next-button{ margin-top: 20px; border: 0; background: #76564b; color: white; padding: 11px 25px; border-radius: 30px; cursor: pointer; transition: .3s; }
+.next-button:hover{ transform: translateY(-3px); box-shadow: 0 7px 15px rgba(0,0,0,.2); }
+.heart{ font-size: 65px; animation: heartbeat 1.3s infinite; }
+@keyframes heartbeat{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.2); } }
+.floating-heart{ position: fixed; bottom: -50px; z-index: 200; pointer-events: none; font-size: calc(15px + 15px * var(--size)); animation: floatHeart var(--duration) linear forwards; }
+@keyframes floatHeart{ 0%{ transform: translateY(0) rotate(0deg); opacity: 0; } 15%{ opacity: .8; } 100%{ transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
+.sparkle{ position: fixed; pointer-events: none; z-index: 201; font-size: 18px; animation: sparkleAnimation 2s ease forwards; }
+@keyframes sparkleAnimation{ 0%{ opacity: 0; transform: scale(.2) rotate(0); } 30%{ opacity: 1; } 100%{ opacity: 0; transform: scale(1.5) rotate(180deg); } }
+.counter{ position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 300; font-family: cursive; font-size: 20px; }
+.nav{ position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 300; display: flex; gap: 10px; }
+.nav button{ border: 0; background: #76564b; color: white; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 18px; }
+@media(max-width:500px){ .page{ height: 87vh; padding: 25px 17px; } .intro-title, h1{ font-size: 50px; } h2{ font-size: 35px; } .single-photo{ width: 90%; } .photo-grid img{ height: 110px; } }
+</style>
+</head>
+
+<body>
+
+<div id="intro">
+    <div class="intro-content">
+        <div class="intro-small">I made something for you…</div>
+        <div class="intro-title">Our Little<br>Story ❤️</div>
+        <button class="open-button" onclick="startScrapbook()">Tap to Open ✨</button>
+    </div>
+</div>
+
+<audio id="music" src="music.mp3" loop preload="auto"></audio>
+<button id="musicButton" onclick="toggleMusic()">🔇</button>
+
+<div class="book">
+
+<!-- PAGE 1 -->
+<section class="page active">
+<div class="content">
+<div class="small">Chapter 01</div>
+<h1>It all<br>started… ❤️</h1>
+<p>Some moments look ordinary until they become memories.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 2 (Photo 01) -->
+<section class="page">
+<div class="content">
+<h2>The Beginning</h2>
+<img class="single-photo" src="01.jpg" alt="Memory 1">
+<p>And somehow, this became one of my favorite memories.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 3 (Photos 02-05) -->
+<section class="page">
+<div class="content">
+<h2>Little Moments</h2>
+<div class="photo-grid">
+<img src="02.jpg" alt="Memory 2">
+<img src="03.jpg" alt="Memory 3">
+<img src="04.jpg" alt="Memory 4">
+<img src="05.jpg" alt="Memory 5">
+</div>
+<p>The little moments always become the big memories.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 4 (Photo 06) -->
+<section class="page">
+<div class="content">
+<h2>That Smile ❤️</h2>
+<img class="single-photo" src="06.jpg" alt="Memory 6">
+<p>Some smiles deserve their own page.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 5 (Photos 07-10) -->
+<section class="page">
+<div class="content">
+<h2>Random Memories</h2>
+<div class="photo-grid">
+<img src="07.jpg" alt="Memory 7">
+<img src="08.jpg" alt="Memory 8">
+<img src="09.jpg" alt="Memory 9">
+<img src="10.jpg" alt="Memory 10">
+</div>
+<p>Random pictures. Unforgettable feelings.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 6 (Photos 11-14) -->
+<section class="page">
+<div class="content">
+<h2>Favorite Moments</h2>
+<div class="photo-grid">
+<img src="11.jpg" alt="Memory 11">
+<img src="12.jpg" alt="Memory 12">
+<img src="13.jpg" alt="Memory 13">
+<img src="14.jpg" alt="Memory 14">
+</div>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 7 (Photo 15) -->
+<section class="page">
+<div class="content">
+<h2>Just Us 🤍</h2>
+<img class="single-photo" src="15.jpg" alt="Memory 15">
+<p>Nothing fancy. Just a beautiful memory.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 8 (Photos 16-19) -->
+<section class="page">
+<div class="content">
+<h2>More Memories</h2>
+<div class="photo-grid">
+<img src="16.jpg" alt="Memory 16">
+<img src="17.jpg" alt="Memory 17">
+<img src="18.jpg" alt="Memory 18">
+<img src="19.jpg" alt="Memory 19">
+</div>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 9 (Photo 20) -->
+<section class="page">
+<div class="content">
+<h2>The Fun Side 😂</h2>
+<img class="single-photo" src="20.jpg" alt="Memory 20">
+<p>Because the best memories usually include laughter.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 10 (Photos 21-24) -->
+<section class="page">
+<div class="content">
+<h2>Too Many Laughs</h2>
+<div class="photo-grid">
+<img src="21.jpg" alt="Memory 21">
+<img src="22.jpg" alt="Memory 22">
+<img src="23.jpg" alt="Memory 23">
+<img src="24.jpg" alt="Memory 24">
+</div>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 11 (Photos 25-28) -->
+<section class="page">
+<div class="content">
+<h2>Polaroid Memories</h2>
+<div class="photo-grid">
+<img src="25.jpg" alt="Memory 25">
+<img src="26.jpg" alt="Memory 26">
+<img src="27.jpg" alt="Memory 27">
+<img src="28.jpg" alt="Memory 28">
+</div>
+<p>Snapshots I would happily relive again.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 12 (Photo 29) -->
+<section class="page">
+<div class="content">
+<h2>One Of My Favorites</h2>
+<img class="single-photo" src="29.jpg" alt="Memory 29">
+<p>This one has a special place in my heart.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 13 (Photos 30-33) -->
+<section class="page">
+<div class="content">
+<h2>Our Little World</h2>
+<div class="photo-grid">
+<img src="30.jpg" alt="Memory 30">
+<img src="31.jpg" alt="Memory 31">
+<img src="32.jpg" alt="Memory 32">
+<img src="33.jpg" alt="Memory 33">
+</div>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 14 -->
+<section class="page">
+<div class="content">
+<h2>Things I Love</h2>
+<p style="font-size:20px">
+Your smile.<br>Your silly side.<br>The random conversations.<br>The little things.<br>The memories.<br>And simply… you. ❤️
+</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 15 (Photo 34) -->
+<section class="page">
+<div class="content">
+<h2>Another Memory</h2>
+<img class="single-photo" src="34.jpg" alt="Memory 34">
+<p>Some moments deserve to be remembered forever.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 16 (Photos 35-38) -->
+<section class="page">
+<div class="content">
+<h2>Photo Dump 📸</h2>
+<div class="photo-grid">
+<img src="35.jpg" alt="Memory 35">
+<img src="36.jpg" alt="Memory 36">
+<img src="37.jpg" alt="Memory 37">
+<img src="38.jpg" alt="Memory 38">
+</div>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 17 (Photo 39) -->
+<section class="page">
+<div class="content">
+<h2>Thank You ❤️</h2>
+<img class="single-photo" src="39.jpg" alt="Memory 39">
+<p>For the smiles, the laughs, and all the memories.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 18 (Photos 40-43) -->
+<section class="page">
+<div class="content">
+<h2>Every Picture Has A Story</h2>
+<div class="photo-grid">
+<img src="40.jpg" alt="Memory 40">
+<img src="41.jpg" alt="Memory 41">
+<img src="42.jpg" alt="Memory 42">
+<img src="43.jpg" alt="Memory 43">
+</div>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 19 (Photo 44) -->
+<section class="page">
+<div class="content">
+<h2>Remember This?</h2>
+<img class="single-photo" src="44.jpg" alt="Memory 44">
+<p>I hope we never forget how beautiful this moment was.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 20 (Photos 45-48) -->
+<section class="page">
+<div class="content">
+<h2>50 Little Memories</h2>
+<div class="photo-grid">
+<img src="45.jpg" alt="Memory 45">
+<img src="46.jpg" alt="Memory 46">
+<img src="47.jpg" alt="Memory 47">
+<img src="48.jpg" alt="Memory 48">
+</div>
+<p>Fifty pictures. Countless feelings. One story.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 21 -->
+<section class="page">
+<div class="content">
+<h2>Dear You,</h2>
+<p style="font-size:19px">
+If you ever wonder how much these little moments mean, just look at these pages.<br><br>
+Every picture carries a memory. Every memory carries a feeling.<br><br>
+And somehow, you are part of so many of my favorite ones. ❤️
+</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 22 -->
+<section class="page">
+<div class="content">
+<h2>Things I Want To Remember</h2>
+<p style="font-size:19px">
+The random laughs.<br>The stupid jokes.<br>The unexpected conversations.<br>The pictures.<br>The moments nobody else saw.<br>The days that became unforgettable.
+</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 23 -->
+<section class="page">
+<div class="content">
+<h2>If Memories Had A Sound…</h2>
+<div class="heart">❤️</div>
+<p>It would sound like laughter, conversations, and all the tiny moments that made us smile.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 24 -->
+<section class="page">
+<div class="content">
+<h2>Future Memories ✨</h2>
+<p style="font-size:20px">
+More pictures.<br>More adventures.<br>More laughs.<br>More stories.<br>More moments worth remembering.
+</p>
+<div class="heart">✨</div>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 25 (Photo 49) -->
+<section class="page">
+<div class="content">
+<h2>One More Favorite</h2>
+<img class="single-photo" src="49.jpg" alt="Memory 49">
+<p>I'd choose this memory again.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 26 (Photo 50) -->
+<section class="page">
+<div class="content">
+<h2>The 50th Memory ✨</h2>
+<img class="single-photo" src="50.jpg" alt="Memory 50">
+<p>Fifty beautiful moments, and still counting.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 27 -->
+<section class="page">
+<div class="content">
+<h2>Our Story</h2>
+<p style="font-size:21px">
+It isn't perfect.<br>It isn't always planned.<br><br>But it's real.<br><br>And that's what makes it beautiful. 🤍
+</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 28 -->
+<section class="page">
+<div class="content">
+<h2>Keep This Forever</h2>
+<div class="heart">❤️</div>
+<p>Whenever you miss these days, come back here.<br><br>The memories will still be waiting.</p>
+<button class="next-button" onclick="nextPage()">Next →</button>
+</div>
+</section>
+
+<!-- PAGE 29 -->
+<section class="page">
+<div class="content">
+<div class="small">A little letter</div>
+<h2>To You…</h2>
+<p style="font-size:18px">
+Thank you for becoming a beautiful part of my story.<br><br>
+Thank you for the memories, the smiles, the laughs, and all those little moments that became special.<br><br>
+I hope we keep collecting moments like these.<br><br>
+Because someday, we'll look back at these pictures and realize… these were the good old days. ❤️
+</p>
+<button class="next-button" onclick="nextPage()">Final page →</button>
+</div>
+</section>
+
+<!-- PAGE 30 -->
+<section class="page">
+<div class="content">
+<div class="small">The End… for now</div>
+<h1>To Be<br>Continued… ❤️</h1>
+<div class="heart">❤️</div>
+<p>This isn't the end of our story.<br><br>There are still so many memories left to make.</p>
+<button class="next-button" onclick="restart()">Read Again ↻</button>
+</div>
+</section>
+
+</div>
+
+<div class="counter" id="counter">1 / 30</div>
+
+<div class="nav">
+    <button onclick="previousPage()">←</button>
+    <button onclick="nextPage()">→</button>
+</div>
+
+</body>
+</html>
